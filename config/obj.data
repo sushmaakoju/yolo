@@ -1,0 +1,5 @@
+classes= 1
+train  = /home/sakoju/testdata/train.txt
+valid  = /home/sakoju/testdata/val.txt
+names = /home/sakoju/testdata/obj.names
+backup = /home/sakoju/backup/example
