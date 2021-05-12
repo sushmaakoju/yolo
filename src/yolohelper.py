@@ -38,7 +38,6 @@ def is_valid_yolo_data_directory(data_path:str, datatype:str):
     assert os.path.exists(datapath), "The train directory %s does not exist. Please enter correct path." %data_path
 
     files = os.listdir(datapath)
-    assert len(files) > 0, "The train directory should not be empty. This should contain images and corresponding annotations text files."
 
     return datapath
 
@@ -176,8 +175,56 @@ def validate_yolo_input_data(datapath:str, targetpath:str):
 
     return True
 
+def validate_files(destination_path:str, count:int, total_count:int):
 
+    clusters = [os.path.join(destination_path, folder) for folder in os.listdir(destination_path)]
+    assert len(clusters) == count, "Clusters counts do not match."
     
+    for cluster in clusters:
+        folders = [os.path.join(cluster, folder) for folder in os.listdir(cluster) if os.path.isdir(os.path.join(cluster, folder)) and ".ipynb_checkpoints" != folder]
+        if len(folders) > 0:
+            count1, count2 = [len(os.listdir(folder)) for folder in folders]
+            print(total_count, count1+count2)
+            assert total_count == count1+count2, "Files counts do not match."
+
+    return True
 
 
+def create_cross_validation_folds(imagenames:list,destination_path:str, all_data_paths_list:list):
+    total_count  = len(all_data_paths_list)
+    for i in range(len(imagenames)):
+        print(i)
+        if not os.path.exists(os.path.join(destination_path, "validation_cluster_00"+str(i+1))):
+            os.mkdir(os.path.join(destination_path, "validation_cluster_00"+str(i+1)))
+        path = os.path.join(destination_path, "validation_cluster_00"+str(i+1))
+        
+        if not os.path.exists(os.path.join(path, "train")):
+            os.mkdir(os.path.join(path, "train"))
+        tpath = os.path.join(path, "train")
+
+        if not os.path.exists(os.path.join(path, "validation")):
+            os.mkdir(os.path.join(path, "validation"))
+        vpath = os.path.join(path, "validation")
+
+        val_imname = imagenames[i]
+        train_imnames = imagenames[:i]+imagenames[i+1:]
+
+        this_val_list = [f for f in all_data_paths_list if os.path.basename(f).startswith(val_imname) ]
+        
+
+        copy_yolo_files(this_val_list, vpath)
+        print(len(os.listdir(vpath)), len(this_val_list))
+
+        print(val_imname, train_imnames)
+
+        this_train_split = [f for f in all_data_paths_list for imname in train_imnames if os.path.basename(f).startswith(imname) ]
+        copy_yolo_files(this_train_split, tpath)
+
+        print(len(os.listdir(tpath)), len(this_train_split))
+        print(len(this_val_list)+ len(this_train_split))
     
+    
+    flag = validate_files(destination_path,len(imagenames), total_count)
+
+
+    return True
