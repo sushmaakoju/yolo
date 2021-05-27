@@ -5,31 +5,30 @@
 ##### Please note that all the Python methods in the src folder are meant to be used for Jupyter Notebooks.
 ##### In fact the methods are picked up from notebooks to put in a single palce for re-usability or reference for later.  
 ##### Hence there is expected to be some hard coded values that work for this project or generally needs testing.
-##### Due to this these methods, should be well tested to your target dataset, folder paths before using the methods.
+##### Due to this these methods, should be well tested to your target dataset formats, annotation file formats, sizes of images, folder paths before using the methods.
 
 ### Preparation for Training
 * Assumption: Training sub images and corresponding yolov4 annotation formatted text files were generated
 * Decide on cross validation folds and generate train.txt and val.txt using 
-    * https://github.com/sushmaakoju/yolo/blob/main/src/yolohelper.py 
-* Generate data distribution across training and validation for each folds, 
-    * fold-wise vehicle counts, single or multi class-wise distribution using methods in
-    * https://github.com/sushmaakoju/yolo/blob/main/src/plots_for_dataset.py 
-    * https://github.com/sushmaakoju/yolo/blob/main/src/yolohelper.py 
+    * [To refer yolo helper methods for data preparation](https://github.com/sushmaakoju/yolo/blob/main/src/yolohelper.py)
+* Generate data distribution across training and validation for each folds, fold-wise vehicle counts, single or multi class-wise distribution using methods in
+    * [To refer yolo helper methods for data visualization](https://github.com/sushmaakoju/yolo/blob/main/src/plots_for_dataset.py)
+    * [To refer yolo helper methods for analysis of training and evaluation:](https://github.com/sushmaakoju/yolo/blob/main/src/yolohelper.py) 
 * The above plots on data help understand the noise and ground truth distribution between folds, whether single class or multi-class. This will help in analysis for evaluation.
 * Use single obj/data folder to store all train image, annotation file pairs.
-* For validation images: save all validation images to each of separate folders since –save_labels creates imagename.txt files during Test evaluation step (slide 20)
+* For validation images: save all validation images to each of separate folders since –save_labels creates imagename.txt files during Test evaluation step.
 * Create obj_foldnumber.data for each of cross validation folds such that each includes corresponding train_foldnumber.txt and val_foldnumber.txt
 * Update obj.names to class names that needs detection
 * Generate anchors specific to each of train_fold you would like to train.:
     * ./darknet detector calc_anchors cross_validation_folds/anchors/cfg/obj2.data -num_of_clusters 9 -width 768 -height 768
 
 ### Steps to Train custom object detection : specific to Selwyn datasets:
-* Clone https://github.com/AlexeyAB/darknet
-* Download Yolov4-custom.cfg from https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-custom.cfg 
-* Download weights file i.e. yolov4.conv.137 from  https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 
+* Clone [To clone Darknet repository, click here:](https://github.com/AlexeyAB/darknet)
+* Download Yolov4-custom.cfg from [Yolov4 custom configuration, click here:](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-custom.cfg) 
+* Download weights file i.e. yolov4.conv.137 from  [Yolov4 weights for custom object detection, click here:](https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 )
 * Update width and height to each of training image size
 * Update max_batches one for first 1000 iterations
-* And another max_batches value for after 1000 iterations – should be rounded to closest to Total number of training images. (refere slide 10 for more elaborate description)
+* And another max_batches value for after 1000 iterations – should be rounded to closest to Total number of training images.
 * Update classes = total number of classes for required for object detection. Use classes =1
 * Update filters = (num of classes + 5) * 3, filters = 18 (for 1 class)
 * Create obj.data, obj.names, backup folder (to save results).
@@ -55,14 +54,14 @@
 ### Steps to Evaluate Map and Test
 * For each of obj_foldnumber.data, map evaluation needs to be conducted or depending which obj.data or train, validation set you used.
 * Update or use the bash script to run evaluations: 
-    * https://github.com/sushmaakoju/yolo/blob/main/scripts/evaluate_map.sh 
+    * [Refer evaluation mAP scripts](https://github.com/sushmaakoju/yolo/blob/main/scripts/evaluate_map.sh)
 * Map Evaluation commands used:
     * -dont_show (don’t show loss/results window)
     * -ext_output (save coordinates detected )
     * < cross_validation_folds/training/val3.txt > (input validation images)
     * map_results3.txt (output log file to store command line output)
 * Update or use the back script to run test evaluations:
-    * https://github.com/sushmaakoju/yolo/blob/main/scripts/evaluate_test_yolov4.sh 
+    * [Refer evaluation test scripts](https://github.com/sushmaakoju/yolo/blob/main/scripts/evaluate_test_yolov4.sh)
 * Test evaluation commands use: 
     * -thresh 0.25 (threshold for ioU)
     * -dont_show (don’t show loss/results window)
@@ -93,3 +92,11 @@
 
 ##### Command to generate anchors for given train data which is provided in obj.data file, given yolo_config file and weights.
 * ./darknet detector test  cross_validation_folds/training/cfg/obj8.data cross_validation_folds/training/cfg/yolov4.cfg pre-trained-weights/yolov4.weights -dont_show -save_labels < cross_validation_folds/training/val8.txt > map_results8.txt
+
+
+#### References:
+* [How to train to detect custom objects for Yolov4](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
+* [Refer YOLOv4: Optimal Speed and Accuracy of Object Detection](https://arxiv.org/abs/2004.10934)
+* `@misc{bochkovskiy2020yolov4, title={YOLOv4: Optimal Speed and Accuracy of Object Detection},
+    author={Alexey Bochkovskiy and Chien-Yao Wang and Hong-Yuan Mark Liao}, year={2020},
+    eprint={2004.10934}, archivePrefix={arXiv},primaryClass={cs.CV}}`
