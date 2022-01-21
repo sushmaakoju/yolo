@@ -2,7 +2,7 @@
 
 ### This is repository for YoloV4 training for object detection for CGSI project at Robotics Institute, Carnegie Mellon University.
 ### Code of Conduct
-If any additional resources were used for specific implementation, it is provided in the respective implementation file. If this repository is being used, please read and follow <a href="https://github.com/sushmaakoju/yolo/blob/main/CODE_OF_CONDUCT.md">code of conduct guidelines</a>. Please reach out to project supervisors for additional information/guidelines.
+If any additional resources were used for specific implementation, it is provided in the respective implementation file. If this repository is being used, please read and follow <a href="https://github.com/sushmaakoju/yolo/blob/main/CODE_OF_CONDUCT.md">code of conduct guidelines</a>. This repository is not in use since one year, hence libraries and packages are not updated. Please reach out to project supervisors for additional information/guidelines.
 
 ##### Please note that all the Python methods in the src folder are meant to be used for Jupyter Notebooks.
 ##### In fact the methods are picked up from notebooks to put in a single palce for re-usability or reference for later.  
